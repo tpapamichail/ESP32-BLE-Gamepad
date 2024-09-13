@@ -36,18 +36,23 @@ constexpr int buttonPins[] = {
 constexpr int numButtons = sizeof(buttonPins) / sizeof(buttonPins[0]);
 
 // Σταθερές για καθυστέρηση αποθορυβοποίησης, διάστημα polling και χρονικό όριο ύπνου
-constexpr unsigned long DEBOUNCE_DELAY = 10;
-constexpr unsigned long POLLING_INTERVAL = 10;
-constexpr unsigned long SLEEP_TIMEOUT = 300000;  // 5 λεπτά
+constexpr unsigned long DEBOUNCE_DELAY = 5;
+constexpr unsigned long POLLING_INTERVAL = 5;
+constexpr unsigned long SLEEP_TIMEOUT = 600000;  // 10 λεπτά
+constexpr unsigned long CONNECTION_CHECK_INTERVAL = 5000;  // 5 δευτερόλεπτα
 
 // Μεταβλητές χρόνου
 unsigned long previousMillis = 0;
 unsigned long lastActivityTime = 0;
+unsigned long lastConnectionCheck = 0;
 
 // Πίνακες για την παρακολούθηση της κατάστασης των κουμπιών
 unsigned long lastDebounceTime[numButtons];
 bool buttonState[numButtons];
 bool lastButtonState[numButtons];
+
+// Μεταβλητή για την αποθήκευση της κατάστασης σύνδεσης
+bool bleConnected = false;
 
 void setup() {
   Serial.begin(115200);
@@ -76,14 +81,27 @@ void setup() {
 void loop() {
   unsigned long currentMillis = millis();
 
+  // Έλεγχος κατάστασης σύνδεσης περιοδικά
+  if (currentMillis - lastConnectionCheck >= CONNECTION_CHECK_INTERVAL) {
+    bool currentConnectionStatus = bleGamepad.isConnected();
+
+    if (currentConnectionStatus != bleConnected) {
+      bleConnected = currentConnectionStatus;
+      Serial.print("BLE Connection Status: ");
+      Serial.println(bleConnected ? "Connected" : "Disconnected");
+    }
+
+    lastConnectionCheck = currentMillis;
+  }
+
   // Διαχείριση του LED ανάλογα με την κατάσταση σύνδεσης
-  if (bleGamepad.isConnected()) {
+  if (bleConnected) {
     digitalWrite(LED_PIN, HIGH);
   } else {
     digitalWrite(LED_PIN, LOW);
   }
 
-  if (bleGamepad.isConnected()) {
+  if (bleConnected) {
     if (currentMillis - previousMillis >= POLLING_INTERVAL) {
       bool activityDetected = false;
 
