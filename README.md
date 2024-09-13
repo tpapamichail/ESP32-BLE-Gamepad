@@ -1,5 +1,7 @@
 # BLE Gamepad with ESP32
 
+Διαθέσιμο και στα [Ελληνικά](README.el.md).
+
 A comprehensive example of implementing a wireless gamepad using the ESP32 and the `BleGamepad` library. This project allows you to create a custom gamepad that connects via Bluetooth to devices such as computers, smartphones, and tablets.
 
 ## Table of Contents
