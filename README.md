@@ -1,170 +1,170 @@
-# BLE Gamepad με ESP32
+# BLE Gamepad with ESP32
 
-Ένα πλήρες παράδειγμα υλοποίησης ενός ασύρματου gamepad χρησιμοποιώντας το ESP32 και τη βιβλιοθήκη `BleGamepad`. Αυτό το project επιτρέπει τη δημιουργία ενός προσαρμοσμένου gamepad που συνδέεται μέσω Bluetooth σε συσκευές όπως υπολογιστές, smartphones και tablets.
+A comprehensive example of implementing a wireless gamepad using the ESP32 and the `BleGamepad` library. This project allows you to create a custom gamepad that connects via Bluetooth to devices such as computers, smartphones, and tablets.
 
-## Περιεχόμενα
+## Table of Contents
 
-- [Περιγραφή](#περιγραφή)
-- [Χαρακτηριστικά](#χαρακτηριστικά)
-- [Απαιτήσεις](#απαιτήσεις)
-- [Σύνδεση Υλικού](#σύνδεση-υλικού)
-- [Εγκατάσταση](#εγκατάσταση)
-- [Χρήση](#χρήση)
-- [Παραμετροποίηση](#παραμετροποίηση)
-- [Αδειοδότηση](#αδειοδότηση)
-- [Συνεισφορά](#συνεισφορά)
-- [Ευχαριστίες](#ευχαριστίες)
+- [Description](#description)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Hardware Setup](#hardware-setup)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Customization](#customization)
+- [License](#license)
+- [Contributing](#contributing)
+- [Acknowledgments](#acknowledgments)
 
-## Περιγραφή
+## Description
 
-Αυτό το project παρουσιάζει πώς να δημιουργήσετε ένα BLE gamepad χρησιμοποιώντας ένα ESP32. Το ESP32 λειτουργεί ως συσκευή Bluetooth Low Energy (BLE) που αναγνωρίζεται ως gamepad από άλλες συσκευές. Μπορείτε να συνδέσετε κουμπιά σε συγκεκριμένα GPIO pins του ESP32 και να τα χρησιμοποιήσετε για να στείλετε εντολές σε συνδεδεμένες συσκευές.
+This project demonstrates how to create a BLE gamepad using an ESP32. The ESP32 functions as a Bluetooth Low Energy (BLE) device recognized as a gamepad by other devices. You can connect buttons to specific GPIO pins of the ESP32 and use them to send commands to connected devices.
 
-## Χαρακτηριστικά
+## Features
 
-- **Υποστήριξη 16 κουμπιών**: Συμπεριλαμβανομένων των τυπικών κουμπιών A, B, X, Y, L1, R1, L2, R2, Start, Select, D-Pad και άλλων.
-- **Αποθορυβοποίηση κουμπιών**: Εξασφαλίζει αξιόπιστη ανίχνευση πατήματος κουμπιών.
-- **Λειτουργία ύπνου**: Εισέρχεται σε βαθύ ύπνο μετά από καθορισμένο χρόνο αδράνειας για εξοικονόμηση ενέργειας.
-- **Αφύπνιση από κουμπί**: Μπορεί να αφυπνιστεί από βαθύ ύπνο με το πάτημα ενός συγκεκριμένου κουμπιού.
-- **Ενδεικτικό LED**: Δείχνει την κατάσταση σύνδεσης της συσκευής.
+- **Supports 16 buttons**: Including standard buttons like A, B, X, Y, L1, R1, L2, R2, Start, Select, D-Pad, and more.
+- **Button debouncing**: Ensures reliable button press detection.
+- **Sleep mode**: Enters deep sleep after a specified period of inactivity to save power.
+- **Wake-up from button**: Can wake up from deep sleep by pressing a specific button.
+- **Indicator LED**: Shows the connection status of the device.
 
-## Απαιτήσεις
+## Requirements
 
-- **Υλικό**:
+- **Hardware**:
   - ESP32 development board
-  - Κουμπιά (push buttons) για κάθε εντολή που θέλετε να υποστηρίξετε
-  - Καλωδιώσεις για τη σύνδεση των κουμπιών στο ESP32
-- **Λογισμικό**:
-  - Arduino IDE (έκδοση 1.8.13 ή νεότερη)
-  - Εγκατεστημένη υποστήριξη για ESP32 στο Arduino IDE
-  - Βιβλιοθήκη `BleGamepad` εγκατεστημένη στο Arduino IDE
+  - Push buttons for each command you want to support
+  - Wires to connect the buttons to the ESP32
+- **Software**:
+  - Arduino IDE (version 1.8.13 or later)
+  - ESP32 support installed in the Arduino IDE
+  - `BleGamepad` library installed in the Arduino IDE
 
-## Σύνδεση Υλικού
+## Hardware Setup
 
-Συνδέστε τα κουμπιά στα αντίστοιχα GPIO pins του ESP32 όπως περιγράφεται παρακάτω. Κάθε κουμπί πρέπει να συνδεθεί μεταξύ του GPIO pin και της γείωσης (GND).
+Connect the buttons to the corresponding GPIO pins of the ESP32 as described below. Each button should be connected between the GPIO pin and ground (GND).
 
-| Κουμπί                | GPIO Pin |
-|-----------------------|----------|
-| BUTTON_A_PIN          | 32       |
-| BUTTON_B_PIN          | 33       |
-| BUTTON_X_PIN          | 25       |
-| BUTTON_Y_PIN          | 26       |
-| BUTTON_L1_PIN         | 27       |
-| BUTTON_R1_PIN         | 14       |
-| BUTTON_L2_PIN         | 12       |
-| BUTTON_R2_PIN         | 13       |
-| BUTTON_START_PIN      | 23       |
-| BUTTON_SELECT_PIN     | 22       |
-| BUTTON_THUMB_LEFT_PIN | 4        |
-| BUTTON_THUMB_RIGHT_PIN| 5        |
-| BUTTON_DPAD_UP_PIN    | 21       |
-| BUTTON_DPAD_DOWN_PIN  | 19       |
-| BUTTON_DPAD_LEFT_PIN  | 18       |
-| BUTTON_DPAD_RIGHT_PIN | 17       |
+| Button                 | GPIO Pin |
+|------------------------|----------|
+| BUTTON_A_PIN           | 32       |
+| BUTTON_B_PIN           | 33       |
+| BUTTON_X_PIN           | 25       |
+| BUTTON_Y_PIN           | 26       |
+| BUTTON_L1_PIN          | 27       |
+| BUTTON_R1_PIN          | 14       |
+| BUTTON_L2_PIN          | 12       |
+| BUTTON_R2_PIN          | 13       |
+| BUTTON_START_PIN       | 23       |
+| BUTTON_SELECT_PIN      | 22       |
+| BUTTON_THUMB_LEFT_PIN  | 4        |
+| BUTTON_THUMB_RIGHT_PIN | 5        |
+| BUTTON_DPAD_UP_PIN     | 21       |
+| BUTTON_DPAD_DOWN_PIN   | 19       |
+| BUTTON_DPAD_LEFT_PIN   | 18       |
+| BUTTON_DPAD_RIGHT_PIN  | 17       |
 
-**Σημείωση**: Το ενσωματωμένο LED του ESP32 συνήθως βρίσκεται στο GPIO 2.
+**Note**: The built-in LED of the ESP32 is usually on GPIO 2.
 
-## Εγκατάσταση
+## Installation
 
-1. **Εγκατάσταση του Arduino IDE**:
+1. **Install the Arduino IDE**:
 
-   Κατεβάστε και εγκαταστήστε το Arduino IDE από την [επίσημη ιστοσελίδα](https://www.arduino.cc/en/software).
+   Download and install the Arduino IDE from the [official website](https://www.arduino.cc/en/software).
 
-2. **Εγκατάσταση υποστήριξης ESP32 στο Arduino IDE**:
+2. **Install ESP32 support in the Arduino IDE**:
 
-   - Ανοίξτε το Arduino IDE.
-   - Μεταβείτε στα `File` > `Preferences`.
-   - Στο πεδίο `Additional Boards Manager URLs`, προσθέστε:
+   - Open the Arduino IDE.
+   - Go to `File` > `Preferences`.
+   - In the `Additional Boards Manager URLs` field, add:
 
      ```
      https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
      ```
 
-   - Πατήστε `OK`.
-   - Μεταβείτε στα `Tools` > `Board` > `Boards Manager`.
-   - Αναζητήστε `esp32` και εγκαταστήστε το πακέτο `esp32` της Espressif Systems.
+   - Click `OK`.
+   - Navigate to `Tools` > `Board` > `Boards Manager`.
+   - Search for `esp32` and install the `esp32` package by Espressif Systems.
 
-3. **Εγκατάσταση της βιβλιοθήκης BleGamepad**:
+3. **Install the BleGamepad library**:
 
-   - Μεταβείτε στα `Sketch` > `Include Library` > `Manage Libraries`.
-   - Αναζητήστε `BleGamepad`.
-   - Εγκαταστήστε τη βιβλιοθήκη `ESP32-BLE-Gamepad` του `lemmingDev`.
+   - Go to `Sketch` > `Include Library` > `Manage Libraries`.
+   - Search for `BleGamepad`.
+   - Install the `ESP32-BLE-Gamepad` library by `lemmingDev`.
 
-4. **Κατέβασμα του κώδικα**:
+4. **Download the code**:
 
-   - Κατεβάστε ή κλωνοποιήστε αυτό το repository.
-   - Ανοίξτε το αρχείο `.ino` στο Arduino IDE.
+   - Download or clone this repository.
+   - Open the `.ino` file in the Arduino IDE.
 
-## Χρήση
+## Usage
 
-1. **Προγραμματισμός του ESP32**:
+1. **Program the ESP32**:
 
-   - Συνδέστε το ESP32 στον υπολογιστή σας μέσω USB.
-   - Επιλέξτε το κατάλληλο board από το `Tools` > `Board` (π.χ., `ESP32 Dev Module`).
-   - Επιλέξτε τη σωστή θύρα από το `Tools` > `Port`.
-   - Πατήστε το κουμπί `Upload` για να φορτώσετε το πρόγραμμα στο ESP32.
+   - Connect the ESP32 to your computer via USB.
+   - Select the appropriate board from `Tools` > `Board` (e.g., `ESP32 Dev Module`).
+   - Select the correct port from `Tools` > `Port`.
+   - Click the `Upload` button to upload the program to the ESP32.
 
-2. **Σύζευξη με συσκευή**:
+2. **Pair with a device**:
 
-   - Μετά τον προγραμματισμό, το ESP32 θα ξεκινήσει να λειτουργεί ως BLE gamepad.
-   - Στη συσκευή με την οποία θέλετε να συνδεθείτε (υπολογιστής, smartphone κ.λπ.), μεταβείτε στις ρυθμίσεις Bluetooth.
-   - Αναζητήστε νέες συσκευές.
-   - Θα πρέπει να δείτε μια συσκευή με το όνομα `ESP32 Gamepad` ή παρόμοιο.
-   - Επιλέξτε τη συσκευή για σύζευξη.
+   - After programming, the ESP32 will start functioning as a BLE gamepad.
+   - On the device you want to connect to (computer, smartphone, etc.), go to the Bluetooth settings.
+   - Search for new devices.
+   - You should see a device named `ESP32 Gamepad` or similar.
+   - Select the device to pair.
 
-3. **Χρήση του gamepad**:
+3. **Use the gamepad**:
 
-   - Αφού ολοκληρωθεί η σύζευξη, το ESP32 θα αναγνωρίζεται ως gamepad.
-   - Πατήστε τα κουμπιά που έχετε συνδέσει για να στείλετε εντολές στη συσκευή σας.
-   - Το ενσωματωμένο LED θα είναι αναμμένο όταν υπάρχει ενεργή σύνδεση.
+   - Once pairing is complete, the ESP32 will be recognized as a gamepad.
+   - Press the buttons you've connected to send commands to your device.
+   - The built-in LED will be lit when there is an active connection.
 
-4. **Λειτουργία ύπνου**:
+4. **Sleep mode**:
 
-   - Αν δεν υπάρξει δραστηριότητα για 5 λεπτά (προκαθορισμένη τιμή), το ESP32 θα εισέλθει σε βαθύ ύπνο για εξοικονόμηση ενέργειας.
-   - Πατήστε το κουμπί `A` (ή το κουμπί που ορίζεται ως `WAKE_BUTTON_PIN`) για να αφυπνίσετε τη συσκευή.
+   - If there is no activity for 5 minutes (default value), the ESP32 will enter deep sleep to save power.
+   - Press the `A` button (or the button defined as `WAKE_BUTTON_PIN`) to wake up the device.
 
-## Παραμετροποίηση
+## Customization
 
-- **Αλλαγή των GPIO pins**:
+- **Changing GPIO pins**:
 
-  Αν θέλετε να χρησιμοποιήσετε διαφορετικά GPIO pins, μπορείτε να τροποποιήσετε τις αντίστοιχες γραμμές στον κώδικα:
-
-  ```cpp
-  constexpr int BUTTON_A_PIN = <νέο_pin>;
-  ```
-
-- **Ρύθμιση του χρονικού ορίου ύπνου**:
-
-  Μπορείτε να αλλάξετε το χρονικό διάστημα αδράνειας πριν η συσκευή εισέλθει σε ύπνο τροποποιώντας τη σταθερά `SLEEP_TIMEOUT` (σε milliseconds):
+  If you want to use different GPIO pins, you can modify the corresponding lines in the code:
 
   ```cpp
-  constexpr unsigned long SLEEP_TIMEOUT = 300000; // π.χ., για 5 λεπτά
+  constexpr int BUTTON_A_PIN = <new_pin>;
   ```
 
-- **Ρύθμιση του διαστήματος polling**:
+- **Setting the sleep timeout**:
 
-  Αν θέλετε να αλλάξετε τη συχνότητα με την οποία ελέγχονται τα κουμπιά, τροποποιήστε τη σταθερά `POLLING_INTERVAL`:
+  You can change the idle time before the device enters sleep by modifying the `SLEEP_TIMEOUT` constant (in milliseconds):
 
   ```cpp
-  constexpr unsigned long POLLING_INTERVAL = 10; // σε milliseconds
+  constexpr unsigned long SLEEP_TIMEOUT = 300000; // e.g., for 5 minutes
   ```
 
-- **Προσθήκη επιπλέον λειτουργικότητας**:
+- **Adjusting the polling interval**:
 
-  Μπορείτε να επεκτείνετε τον κώδικα για να υποστηρίξετε αναλογικούς άξονες, δόνηση ή άλλα χαρακτηριστικά που υποστηρίζει η βιβλιοθήκη `BleGamepad`.
+  To change how frequently the buttons are checked, adjust the `POLLING_INTERVAL` constant:
 
-## Αδειοδότηση
+  ```cpp
+  constexpr unsigned long POLLING_INTERVAL = 10; // in milliseconds
+  ```
 
-Αυτό το project διατίθεται υπό την άδεια MIT. Δείτε το αρχείο [LICENSE](LICENSE) για περισσότερες πληροφορίες.
+- **Adding additional functionality**:
 
-## Συνεισφορά
+  You can extend the code to support analog axes, vibration, or other features supported by the `BleGamepad` library.
 
-Συνεισφορές είναι ευπρόσδεκτες! Μπορείτε να ανοίξετε ένα issue για να αναφέρετε προβλήματα ή να προτείνετε βελτιώσεις. Επίσης, μπορείτε να υποβάλετε pull requests με βελτιώσεις ή νέες λειτουργίες.
+## License
 
-## Ευχαριστίες
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
 
-- **[lemmingDev](https://github.com/lemmingDev)** για τη βιβλιοθήκη [ESP32-BLE-Gamepad](https://github.com/lemmingDev/ESP32-BLE-Gamepad).
-- **Κοινότητα ESP32** για την υποστήριξη και τα εργαλεία που παρέχουν.
+## Contributing
+
+Contributions are welcome! You can open an issue to report bugs or suggest improvements. Also, feel free to submit pull requests with enhancements or new features.
+
+## Acknowledgments
+
+- **[lemmingDev](https://github.com/lemmingDev)** for the [ESP32-BLE-Gamepad](https://github.com/lemmingDev/ESP32-BLE-Gamepad) library.
+- **ESP32 Community** for the support and tools they provide.
 
 ---
 
-**Σημείωση**: Αυτό το project δημιουργήθηκε για να βοηθήσει άλλους developers να υλοποιήσουν ένα BLE gamepad με το ESP32. Αν έχετε ερωτήσεις ή χρειάζεστε βοήθεια, μη διστάσετε να επικοινωνήσετε. 
+**Note**: This project was created to help other developers implement a BLE gamepad with the ESP32. If you have questions or need assistance, feel free to reach out.
