@@ -26,6 +26,9 @@ constexpr int LED_PIN = 2;  // Συνήθως το ενσωματωμένο LED 
 
 constexpr int WAKE_BUTTON_PIN = BUTTON_A_PIN;
 
+// Προσθήκη του REVERSE_BUTTON_PIN
+constexpr int REVERSE_BUTTON_PIN = 16;
+
 // Πίνακας με όλα τα pins των κουμπιών
 constexpr int buttonPins[] = {
   BUTTON_A_PIN, BUTTON_B_PIN, BUTTON_X_PIN, BUTTON_Y_PIN,
@@ -49,6 +52,18 @@ unsigned long lastDebounceTime[numButtons];
 bool buttonState[numButtons];
 bool lastButtonState[numButtons];
 
+// Μεταβλητές για το push button αντιστροφής
+unsigned long reverseButtonLastDebounceTime = 0;
+bool reverseButtonState = HIGH;
+bool lastReverseButtonState = HIGH;
+bool reverseMode = false;
+
+// Μεταβλητές για την παρακολούθηση των D-Pad κουμπιών
+bool dpadUpPressed = false;
+bool dpadDownPressed = false;
+bool dpadLeftPressed = false;
+bool dpadRightPressed = false;
+
 void setup() {
   Serial.begin(115200);
   Serial.println("Starting BLE Gamepad...");
@@ -61,6 +76,10 @@ void setup() {
     buttonState[i] = HIGH;
     lastDebounceTime[i] = 0;
   }
+
+  // Ρύθμιση του REVERSE_BUTTON_PIN
+  pinMode(REVERSE_BUTTON_PIN, INPUT_PULLUP);
+  reverseButtonLastDebounceTime = 0;
 
   // Ρύθμιση του LED pin ως έξοδος
   pinMode(LED_PIN, OUTPUT);
@@ -86,6 +105,9 @@ void loop() {
   if (bleGamepad.isConnected()) {
     if (currentMillis - previousMillis >= POLLING_INTERVAL) {
       bool activityDetected = false;
+
+      // Έλεγχος της κατάστασης του κουμπιού αντιστροφής
+      activityDetected |= checkReverseButton();
 
       // Έλεγχος της κατάστασης κάθε κουμπιού
       for (int i = 0; i < numButtons; i++) {
@@ -134,15 +156,121 @@ bool checkButton(int buttonIndex) {
       buttonState[buttonIndex] = reading;
       activity = true; // Υπήρξε αλλαγή κατάστασης κουμπιού
 
-      // Ενημέρωση της κατάστασης του κουμπιού στη συσκευή BLE
-      if (buttonState[buttonIndex] == LOW) {
-        bleGamepad.press(BUTTON_1 + buttonIndex);
+      // Έλεγχος αν είναι D-Pad κουμπί
+      if (buttonIndex >= 12 && buttonIndex <= 15) {
+        // Ενημέρωση της κατάστασης των D-Pad κουμπιών
+        updateDpadState(buttonIndex, buttonState[buttonIndex] == LOW);
       } else {
-        bleGamepad.release(BUTTON_1 + buttonIndex);
+        // Ενημέρωση της κατάστασης των απλών κουμπιών
+        int bleButtonIndex = BUTTON_1 + buttonIndex;
+
+        // Ενημέρωση της κατάστασης του κουμπιού στη συσκευή BLE
+        if (buttonState[buttonIndex] == LOW) {
+          bleGamepad.press(bleButtonIndex);
+        } else {
+          bleGamepad.release(bleButtonIndex);
+        }
       }
     }
   }
 
   lastButtonState[buttonIndex] = reading;
+  return activity;
+}
+
+/**
+ * Ενημερώνει την κατάσταση των D-Pad κουμπιών και ορίζει την κατεύθυνση του D-Pad.
+ */
+void updateDpadState(int buttonIndex, bool isPressed) {
+  switch (buttonIndex) {
+    case 12: // BUTTON_DPAD_UP_PIN
+      dpadUpPressed = isPressed;
+      break;
+    case 13: // BUTTON_DPAD_DOWN_PIN
+      dpadDownPressed = isPressed;
+      break;
+    case 14: // BUTTON_DPAD_LEFT_PIN
+      dpadLeftPressed = isPressed;
+      break;
+    case 15: // BUTTON_DPAD_RIGHT_PIN
+      dpadRightPressed = isPressed;
+      break;
+  }
+
+  // Υπολογισμός της κατεύθυνσης του D-Pad
+  uint8_t dpadDirection = DPAD_CENTERED;
+
+  if (reverseMode) {
+    // Αντιστροφή των κατευθύνσεων
+    if (dpadUpPressed && !dpadDownPressed) {
+      dpadDirection = DPAD_DOWN;
+    }
+    if (dpadDownPressed && !dpadUpPressed) {
+      dpadDirection = DPAD_UP;
+    }
+    if (dpadLeftPressed && !dpadRightPressed) {
+      dpadDirection = DPAD_RIGHT;
+    }
+    if (dpadRightPressed && !dpadLeftPressed) {
+      dpadDirection = DPAD_LEFT;
+    }
+
+    // Συνδυασμός κατευθύνσεων για διαγώνιες κινήσεις
+    if (dpadUpPressed && dpadRightPressed) dpadDirection = DPAD_DOWN_RIGHT;
+    if (dpadUpPressed && dpadLeftPressed) dpadDirection = DPAD_DOWN_LEFT;
+    if (dpadDownPressed && dpadRightPressed) dpadDirection = DPAD_UP_RIGHT;
+    if (dpadDownPressed && dpadLeftPressed) dpadDirection = DPAD_UP_LEFT;
+
+  } else {
+    if (dpadUpPressed && !dpadDownPressed) {
+      dpadDirection = DPAD_UP;
+    }
+    if (dpadDownPressed && !dpadUpPressed) {
+      dpadDirection = DPAD_DOWN;
+    }
+    if (dpadLeftPressed && !dpadRightPressed) {
+      dpadDirection = DPAD_LEFT;
+    }
+    if (dpadRightPressed && !dpadLeftPressed) {
+      dpadDirection = DPAD_RIGHT;
+    }
+
+    // Συνδυασμός κατευθύνσεων για διαγώνιες κινήσεις
+    if (dpadUpPressed && dpadRightPressed) dpadDirection = DPAD_UP_RIGHT;
+    if (dpadUpPressed && dpadLeftPressed) dpadDirection = DPAD_UP_LEFT;
+    if (dpadDownPressed && dpadRightPressed) dpadDirection = DPAD_DOWN_RIGHT;
+    if (dpadDownPressed && dpadLeftPressed) dpadDirection = DPAD_DOWN_LEFT;
+  }
+
+  bleGamepad.setHat(dpadDirection);
+}
+
+/**
+ * Ελέγχει το κουμπί αντιστροφής και εναλλάσσει το reverse mode αν πατηθεί.
+ * Επιστρέφει true αν το κουμπί αντιστροφής πατήθηκε.
+ */
+bool checkReverseButton() {
+  int reading = digitalRead(REVERSE_BUTTON_PIN);
+  bool activity = false;
+
+  // Αποθορυβοποίηση για το κουμπί αντιστροφής
+  if (reading != lastReverseButtonState) {
+    reverseButtonLastDebounceTime = millis();
+  }
+
+  if ((millis() - reverseButtonLastDebounceTime) > DEBOUNCE_DELAY) {
+    if (reading != reverseButtonState) {
+      reverseButtonState = reading;
+      if (reverseButtonState == LOW) {
+        // Εναλλαγή του reverse mode όταν το κουμπί πατηθεί
+        reverseMode = !reverseMode;
+        Serial.print("Reverse mode is now ");
+        Serial.println(reverseMode ? "ON" : "OFF");
+        activity = true; // Το κουμπί αντιστροφής πατήθηκε
+      }
+    }
+  }
+
+  lastReverseButtonState = reading;
   return activity;
 }
