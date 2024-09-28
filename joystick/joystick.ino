@@ -40,7 +40,7 @@ constexpr int numButtons = sizeof(buttonPins) / sizeof(buttonPins[0]);
 constexpr unsigned long DEBOUNCE_DELAY = 5;
 constexpr unsigned long POLLING_INTERVAL = 5;
 constexpr unsigned long SLEEP_TIMEOUT = 600000;  // 10 λεπτά
-constexpr unsigned long CONNECTION_CHECK_INTERVAL = 5000;  // 5 δευτερόλεπτα
+constexpr unsigned long CONNECTION_CHECK_INTERVAL = 60000;  // 1 λεπτό
 
 // Μεταβλητές χρόνου
 unsigned long previousMillis = 0;
