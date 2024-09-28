@@ -40,7 +40,7 @@ constexpr int numButtons = sizeof(buttonPins) / sizeof(buttonPins[0]);
 constexpr unsigned long DEBOUNCE_DELAY = 5;
 constexpr unsigned long POLLING_INTERVAL = 5;
 constexpr unsigned long SLEEP_TIMEOUT = 600000;  // 10 λεπτά
-constexpr unsigned long CONNECTION_CHECK_INTERVAL = 50000;  // 50 δευτερόλεπτα
+constexpr unsigned long CONNECTION_CHECK_INTERVAL = 5000;  // 5 δευτερόλεπτα
 
 // Μεταβλητές χρόνου
 unsigned long previousMillis = 0;
@@ -72,7 +72,7 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, HIGH);
 
-  // Ενεργοποίηση αφύπνισης από βαθύ ύπνο με το κουμπί A
+  // Ενεργοποίηση αφύπνισης από Hibernation mode με το κουμπί A (EXT0 wakeup source)
   esp_sleep_enable_ext0_wakeup(static_cast<gpio_num_t>(WAKE_BUTTON_PIN), LOW);
 
   // Αρχικοποίηση του χρόνου τελευταίας δραστηριότητας
@@ -116,11 +116,11 @@ void loop() {
         lastActivityTime = currentMillis;
       }
 
-      // Αν περάσει το χρονικό όριο χωρίς δραστηριότητα, εισέρχεται σε βαθύ ύπνο
+      // Αν περάσει το χρονικό όριο χωρίς δραστηριότητα, εισέρχεται σε Hibernation mode
       if ((currentMillis - lastActivityTime) > SLEEP_TIMEOUT) {
-        Serial.println("Entering sleep mode...");
+        Serial.println("Entering hibernation mode...");
         digitalWrite(LED_PIN, LOW);
-        prepareForDeepSleep(); // Κλήση της συνάρτησης προετοιμασίας
+        prepareForHibernation(); // Κλήση της συνάρτησης προετοιμασίας
         esp_deep_sleep_start();
       }
 
@@ -167,9 +167,9 @@ bool checkButton(int buttonIndex) {
 }
 
 /**
- * Προετοιμάζει το ESP32 για βαθύ ύπνο για να μειώσει την κατανάλωση ενέργειας.
+ * Προετοιμάζει το ESP32 για Hibernation mode για να μειώσει την κατανάλωση ενέργειας.
  */
-void prepareForDeepSleep() {
+void prepareForHibernation() {
   // Απενεργοποίηση του Bluetooth για μείωση της κατανάλωσης ενέργειας
   bleGamepad.end();
   btStop();
@@ -189,4 +189,9 @@ void prepareForDeepSleep() {
   gpio_pullup_dis(ledGpioNum);
   gpio_pulldown_dis(ledGpioNum);
   rtc_gpio_isolate(ledGpioNum);
+
+  // Απενεργοποίηση των RTC περιφερειακών για ελαχιστοποίηση της κατανάλωσης ενέργειας
+  esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
+  esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_OFF);
+  esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_FAST_MEM, ESP_PD_OPTION_OFF);
 }
