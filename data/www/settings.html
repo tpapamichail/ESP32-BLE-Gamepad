@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 BLE Gamepad - Ρυθμίσεις</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>ESP32 BLE Gamepad</h1>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="/">Αρχική</a></li>
+            <li><a href="/settings" class="active">Ρυθμίσεις</a></li>
+            <li><a href="/buttons">Κουμπιά</a></li>
+            <li><a href="/credentials">Διαπιστευτήρια</a></li>
+        </ul>
+    </nav>
+    
+    <main class="container">
+        <div class="alerts"></div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Γενικές Ρυθμίσεις</h2>
+            </div>
+            <div class="card-body">
+                <form id="settingsForm">
+                    <div class="form-group">
+                        <label for="deviceName">Όνομα Συσκευής:</label>
+                        <input type="text" id="deviceName" name="deviceName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="manufacturer">Κατασκευαστής:</label>
+                        <input type="text" id="manufacturer" name="manufacturer" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="batteryLevel">Επίπεδο Μπαταρίας (%):</label>
+                        <input type="number" id="batteryLevel" name="batteryLevel" min="0" max="100" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sleepTimeout">Χρονικό Όριο Ύπνου (λεπτά):</label>
+                        <input type="number" id="sleepTimeout" name="sleepTimeout" min="1" required>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="button button-primary">Αποθήκευση</button>
+                        <button type="button" id="resetButton" class="button button-danger">Επαναφορά Προεπιλογών</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Βοήθεια</h2>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li><strong>Όνομα Συσκευής:</strong> Το όνομα που θα εμφανίζεται στις συσκευές Bluetooth κατά την αναζήτηση.</li>
+                    <li><strong>Κατασκευαστής:</strong> Το όνομα του κατασκευαστή που θα αναφέρεται στις πληροφορίες της συσκευής.</li>
+                    <li><strong>Επίπεδο Μπαταρίας:</strong> Το επίπεδο μπαταρίας που θα αναφέρεται στην συσκευή. Αυτό είναι μόνο για αναφορά και δεν αντικατοπτρίζει απαραίτητα το πραγματικό επίπεδο μπαταρίας εάν η συσκευή λειτουργεί με μπαταρία.</li>
+                    <li><strong>Χρονικό Όριο Ύπνου:</strong> Ο χρόνος αδράνειας (σε λεπτά) μετά από τον οποίο η συσκευή θα μπει σε λειτουργία βαθιού ύπνου για εξοικονόμηση ενέργειας.</li>
+                </ul>
+                <p><strong>Σημείωση:</strong> Οι αλλαγές στις ρυθμίσεις θα εφαρμοστούν αμέσως και θα αποθηκευτούν μόνιμα. Αν αλλάξετε το όνομα της συσκευής ή του κατασκευαστή, ίσως χρειαστεί να επανασυνδέσετε τη συσκευή με τις συσκευές Bluetooth.</p>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2023 ESP32 BLE Gamepad Project</p>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html> 

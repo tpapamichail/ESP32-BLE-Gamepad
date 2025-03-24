@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 BLE Gamepad - Διαχείριση</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>ESP32 BLE Gamepad</h1>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="/" class="active">Αρχική</a></li>
+            <li><a href="/settings">Ρυθμίσεις</a></li>
+            <li><a href="/buttons">Κουμπιά</a></li>
+            <li><a href="/credentials">Διαπιστευτήρια</a></li>
+        </ul>
+    </nav>
+    
+    <main class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Καλώς ήρθατε στο Web Interface του ESP32 BLE Gamepad</h2>
+            </div>
+            <div class="card-body">
+                <p>Από αυτό το interface μπορείτε να διαχειριστείτε τις ρυθμίσεις του ESP32 BLE Gamepad σας:</p>
+                <ul>
+                    <li><strong>Ρυθμίσεις</strong>: Διαμορφώστε γενικές ρυθμίσεις όπως το όνομα της συσκευής, τον κατασκευαστή, το επίπεδο μπαταρίας και το χρονικό όριο ύπνου.</li>
+                    <li><strong>Κουμπιά</strong>: Διαχειριστείτε τα κουμπιά του gamepad, προσθέστε νέα κουμπιά ή τροποποιήστε τα υπάρχοντα.</li>
+                    <li><strong>Διαπιστευτήρια</strong>: Αλλάξτε το όνομα χρήστη και τον κωδικό πρόσβασης για αυτό το interface.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Οδηγίες Χρήσης</h2>
+            </div>
+            <div class="card-body">
+                <h3>Σύνδεση με άλλες συσκευές</h3>
+                <p>Για να συνδέσετε το ESP32 BLE Gamepad με μια άλλη συσκευή:</p>
+                <ol>
+                    <li>Ενεργοποιήστε το Bluetooth στη συσκευή σας.</li>
+                    <li>Αναζητήστε νέες συσκευές Bluetooth.</li>
+                    <li>Επιλέξτε το "ESP32 Gamepad" (ή το προσαρμοσμένο όνομα που έχετε ορίσει) από τη λίστα των διαθέσιμων συσκευών.</li>
+                    <li>Μόλις συνδεθεί, το LED στο ESP32 θα ανάψει σταθερά.</li>
+                </ol>
+                
+                <h3>Κουμπιά και Λειτουργία</h3>
+                <p>Το ESP32 BLE Gamepad υποστηρίζει έως και 32 κουμπιά. Κάθε κουμπί μπορεί να αντιστοιχιστεί σε ένα συγκεκριμένο pin του ESP32.</p>
+                <p>Τα κουμπιά του gamepad μπορούν να χρησιμοποιηθούν με διάφορες εφαρμογές, παιχνίδια ή συστήματα που υποστηρίζουν συσκευές HID (Human Interface Device) μέσω Bluetooth.</p>
+                
+                <h3>Λειτουργία Εξοικονόμησης Ενέργειας</h3>
+                <p>Το ESP32 BLE Gamepad θα εισέλθει σε λειτουργία βαθιού ύπνου μετά από μια περίοδο αδράνειας για εξοικονόμηση ενέργειας. Μπορείτε να ρυθμίσετε το χρονικό όριο ύπνου στη σελίδα Ρυθμίσεις.</p>
+                <p>Για να επαναφέρετε τη συσκευή από τη λειτουργία ύπνου, πατήστε το κουμπί αφύπνισης (προεπιλεγμένο: κουμπί A).</p>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2023 ESP32 BLE Gamepad Project</p>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html> 

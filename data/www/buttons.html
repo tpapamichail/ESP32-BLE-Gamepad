@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 BLE Gamepad - Διαχείριση Κουμπιών</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>ESP32 BLE Gamepad</h1>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="/">Αρχική</a></li>
+            <li><a href="/settings">Ρυθμίσεις</a></li>
+            <li><a href="/buttons" class="active">Κουμπιά</a></li>
+            <li><a href="/credentials">Διαπιστευτήρια</a></li>
+        </ul>
+    </nav>
+    
+    <main class="container">
+        <div class="alerts"></div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Διαχείριση Κουμπιών</h2>
+            </div>
+            <div class="card-body">
+                <table class="table" id="buttonsTable">
+                    <thead>
+                        <tr>
+                            <th>Button ID</th>
+                            <th>PIN</th>
+                            <th>Ετικέτα</th>
+                            <th>Ενεργό</th>
+                            <th>Ενέργειες</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Τα δεδομένα θα φορτωθούν δυναμικά με JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title" id="formTitle">Προσθήκη Νέου Κουμπιού</h2>
+            </div>
+            <div class="card-body">
+                <form id="buttonForm">
+                    <div class="form-group">
+                        <label for="buttonId">Button ID (1-32):</label>
+                        <input type="number" id="buttonId" name="buttonId" min="1" max="32" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="buttonPin">GPIO Pin:</label>
+                        <input type="number" id="buttonPin" name="buttonPin" min="0" max="39" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="buttonLabel">Ετικέτα:</label>
+                        <input type="text" id="buttonLabel" name="buttonLabel" maxlength="19" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="buttonEnabled">
+                            <input type="checkbox" id="buttonEnabled" name="buttonEnabled" checked>
+                            Ενεργό
+                        </label>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" id="buttonSubmit" class="button button-primary">Προσθήκη</button>
+                        <button type="button" id="buttonCancel" class="button button-warning" style="display: none;">Ακύρωση</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Βοήθεια</h2>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li><strong>Button ID:</strong> Ένα μοναδικό αναγνωριστικό για το κουμπί (από 1 έως 32). Αντιστοιχεί στο αναγνωριστικό κουμπιού που χρησιμοποιείται στη βιβλιοθήκη BleGamepad (π.χ. BUTTON_1, BUTTON_2, κλπ.).</li>
+                    <li><strong>GPIO Pin:</strong> Ο αριθμός του GPIO pin στο ESP32 όπου θα συνδεθεί το κουμπί. Βεβαιωθείτε ότι δεν χρησιμοποιείτε pins που είναι δεσμευμένα για άλλες λειτουργίες.</li>
+                    <li><strong>Ετικέτα:</strong> Μια περιγραφική ετικέτα για το κουμπί (π.χ. "A", "B", "L1", "START", κλπ.).</li>
+                    <li><strong>Ενεργό:</strong> Αν επιλεγεί, το κουμπί θα είναι ενεργό και θα λειτουργεί. Αν όχι, το κουμπί θα αγνοείται.</li>
+                </ul>
+                <p><strong>Σημείωση:</strong> Οι αλλαγές στα κουμπιά θα εφαρμοστούν αμέσως και θα αποθηκευτούν μόνιμα. Μπορείτε να προσθέσετε έως και 32 κουμπιά, αλλά βεβαιωθείτε ότι έχετε αρκετά διαθέσιμα GPIO pins στο ESP32 σας.</p>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2023 ESP32 BLE Gamepad Project</p>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html> 

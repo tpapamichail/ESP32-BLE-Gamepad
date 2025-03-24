@@ -1,172 +1,115 @@
-# BLE Gamepad with ESP32
+# ESP32 BLE Gamepad
 
-Διαθέσιμο και στα [Ελληνικά](README.el.md).
+## English
 
-A comprehensive example of implementing a wireless gamepad using the ESP32 and the `BleGamepad` library. This project allows you to create a custom gamepad that connects via Bluetooth to devices such as computers, smartphones, and tablets.
+### Overview
+This project implements a Bluetooth Low Energy (BLE) gamepad using an ESP32 microcontroller. It allows you to create a customizable wireless gamepad that can be connected to computers, smartphones, or other devices supporting Bluetooth controllers.
 
-## Table of Contents
+### Features
+- BLE connectivity for wireless control
+- Configurable buttons (up to 32) with customizable PINs
+- Web interface for easy configuration
+- Authentication system (default credentials: admin/admin)
+- Sleep mode for energy conservation
+- LED status indicators
+- Simple wiring with direct button connections to ESP32 pins
 
-- [Description](#description)
-- [Features](#features)
-- [Requirements](#requirements)
-- [Hardware Setup](#hardware-setup)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Customization](#customization)
-- [License](#license)
-- [Contributing](#contributing)
-- [Acknowledgments](#acknowledgments)
+### Hardware Requirements
+- ESP32 development board
+- Push buttons or microswitches
+- 10k ohm resistors (optional, as the internal pull-up resistors are used)
+- LED for status indication (optional)
+- Power source (USB or battery)
 
-## Description
+### Installation
+1. Clone this repository or download the source code
+2. Install the required libraries in your Arduino IDE:
+   - ESP32 BLE Arduino by Neil Kolban
+   - AsyncTCP by Hristo Gochkov
+   - ESPAsyncWebServer by Hristo Gochkov
+   - ArduinoJson by Benoit Blanchon
+3. Connect your buttons to the ESP32 as per your configuration
+4. Upload the code to your ESP32
+5. Upload the web interface files to SPIFFS using the "ESP32 Sketch Data Upload" tool
 
-This project demonstrates how to create a BLE gamepad using an ESP32. The ESP32 functions as a Bluetooth Low Energy (BLE) device recognized as a gamepad by other devices. You can connect buttons to specific GPIO pins of the ESP32 and use them to send commands to connected devices.
+### Web Interface Usage
+1. Turn on the web interface by pressing the BOOT button on your ESP32
+2. Connect to the "ESP32-BLE-Gamepad" WiFi network with password "esp32gamepad"
+3. Open a web browser and navigate to `http://192.168.4.1`
+4. Log in with the default credentials (username: `admin`, password: `admin`)
+5. Configure your gamepad through the intuitive web interface:
+   - General Settings: Change device name, manufacturer, battery level, and sleep timeout
+   - Buttons: Add, edit, or remove button configurations
+   - Credentials: Change the username and password
 
-## Features
+### Power Management
+The gamepad enters sleep mode after a configurable period of inactivity to conserve power. Press any configured button to wake it up. The LED indicates the current status:
+- Solid ON: Connected via BLE
+- OFF: Not connected
+- Blinking: Web interface active
 
-- **Supports 16 buttons**: Including standard buttons like A, B, X, Y, L1, R1, L2, R2, Start, Select, D-Pad, and more.
-- **Button debouncing**: Ensures reliable button press detection.
-- **Sleep mode**: Enters deep sleep after a specified period of inactivity to save power.
-- **Wake-up from button**: Can wake up from deep sleep by pressing a specific button.
-- **Indicator LED**: Shows the connection status of the device.
+### Troubleshooting
+- If buttons don't respond, check your wiring and PIN configurations
+- If the gamepad doesn't connect, ensure Bluetooth is enabled on your host device
+- If the web interface isn't accessible, try resetting the ESP32 and check your WiFi connection
 
-## Requirements
-
-- **Hardware**:
-  - ESP32 development board
-  - Push buttons for each command you want to support
-  - Wires to connect the buttons to the ESP32
-- **Software**:
-  - Arduino IDE (version 1.8.13 or later)
-  - ESP32 support installed in the Arduino IDE
-  - `BleGamepad` library installed in the Arduino IDE
-
-## Hardware Setup
-
-Connect the buttons to the corresponding GPIO pins of the ESP32 as described below. Each button should be connected between the GPIO pin and ground (GND).
-
-| Button                 | GPIO Pin |
-|------------------------|----------|
-| BUTTON_A_PIN           | 32       |
-| BUTTON_B_PIN           | 33       |
-| BUTTON_X_PIN           | 25       |
-| BUTTON_Y_PIN           | 26       |
-| BUTTON_L1_PIN          | 27       |
-| BUTTON_R1_PIN          | 14       |
-| BUTTON_L2_PIN          | 12       |
-| BUTTON_R2_PIN          | 13       |
-| BUTTON_START_PIN       | 23       |
-| BUTTON_SELECT_PIN      | 22       |
-| BUTTON_THUMB_LEFT_PIN  | 4        |
-| BUTTON_THUMB_RIGHT_PIN | 5        |
-| BUTTON_DPAD_UP_PIN     | 21       |
-| BUTTON_DPAD_DOWN_PIN   | 19       |
-| BUTTON_DPAD_LEFT_PIN   | 18       |
-| BUTTON_DPAD_RIGHT_PIN  | 17       |
-
-**Note**: The built-in LED of the ESP32 is usually on GPIO 2.
-
-## Installation
-
-1. **Install the Arduino IDE**:
-
-   Download and install the Arduino IDE from the [official website](https://www.arduino.cc/en/software).
-
-2. **Install ESP32 support in the Arduino IDE**:
-
-   - Open the Arduino IDE.
-   - Go to `File` > `Preferences`.
-   - In the `Additional Boards Manager URLs` field, add:
-
-     ```
-     https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
-     ```
-
-   - Click `OK`.
-   - Navigate to `Tools` > `Board` > `Boards Manager`.
-   - Search for `esp32` and install the `esp32` package by Espressif Systems.
-
-3. **Install the BleGamepad library**:
-
-   - Go to `Sketch` > `Include Library` > `Manage Libraries`.
-   - Search for `BleGamepad`.
-   - Install the `ESP32-BLE-Gamepad` library by `lemmingDev`.
-
-4. **Download the code**:
-
-   - Download or clone this repository.
-   - Open the `.ino` file in the Arduino IDE.
-
-## Usage
-
-1. **Program the ESP32**:
-
-   - Connect the ESP32 to your computer via USB.
-   - Select the appropriate board from `Tools` > `Board` (e.g., `ESP32 Dev Module`).
-   - Select the correct port from `Tools` > `Port`.
-   - Click the `Upload` button to upload the program to the ESP32.
-
-2. **Pair with a device**:
-
-   - After programming, the ESP32 will start functioning as a BLE gamepad.
-   - On the device you want to connect to (computer, smartphone, etc.), go to the Bluetooth settings.
-   - Search for new devices.
-   - You should see a device named `ESP32 Gamepad` or similar.
-   - Select the device to pair.
-
-3. **Use the gamepad**:
-
-   - Once pairing is complete, the ESP32 will be recognized as a gamepad.
-   - Press the buttons you've connected to send commands to your device.
-   - The built-in LED will be lit when there is an active connection.
-
-4. **Sleep mode**:
-
-   - If there is no activity for 5 minutes (default value), the ESP32 will enter deep sleep to save power.
-   - Press the `A` button (or the button defined as `WAKE_BUTTON_PIN`) to wake up the device.
-
-## Customization
-
-- **Changing GPIO pins**:
-
-  If you want to use different GPIO pins, you can modify the corresponding lines in the code:
-
-  ```cpp
-  constexpr int BUTTON_A_PIN = <new_pin>;
-  ```
-
-- **Setting the sleep timeout**:
-
-  You can change the idle time before the device enters sleep by modifying the `SLEEP_TIMEOUT` constant (in milliseconds):
-
-  ```cpp
-  constexpr unsigned long SLEEP_TIMEOUT = 300000; // e.g., for 5 minutes
-  ```
-
-- **Adjusting the polling interval**:
-
-  To change how frequently the buttons are checked, adjust the `POLLING_INTERVAL` constant:
-
-  ```cpp
-  constexpr unsigned long POLLING_INTERVAL = 10; // in milliseconds
-  ```
-
-- **Adding additional functionality**:
-
-  You can extend the code to support analog axes, vibration, or other features supported by the `BleGamepad` library.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
-
-## Contributing
-
-Contributions are welcome! You can open an issue to report bugs or suggest improvements. Also, feel free to submit pull requests with enhancements or new features.
-
-## Acknowledgments
-
-- **[lemmingDev](https://github.com/lemmingDev)** for the [ESP32-BLE-Gamepad](https://github.com/lemmingDev/ESP32-BLE-Gamepad) library.
-- **ESP32 Community** for the support and tools they provide.
+### License
+This project is released under the MIT License.
 
 ---
 
-**Note**: This project was created to help other developers implement a BLE gamepad with the ESP32. If you have questions or need assistance, feel free to reach out.
+## Ελληνικά
+
+### Επισκόπηση
+Αυτό το έργο υλοποιεί ένα χειριστήριο Bluetooth Low Energy (BLE) χρησιμοποιώντας έναν μικροελεγκτή ESP32. Σας επιτρέπει να δημιουργήσετε ένα προσαρμόσιμο ασύρματο χειριστήριο που μπορεί να συνδεθεί με υπολογιστές, smartphones ή άλλες συσκευές που υποστηρίζουν ελεγκτές Bluetooth.
+
+### Χαρακτηριστικά
+- Συνδεσιμότητα BLE για ασύρματο έλεγχο
+- Διαμορφώσιμα κουμπιά (έως 32) με προσαρμόσιμα PIN
+- Διαδικτυακή διεπαφή για εύκολη διαμόρφωση
+- Σύστημα αυθεντικοποίησης (προεπιλεγμένα διαπιστευτήρια: admin/admin)
+- Λειτουργία αναστολής για εξοικονόμηση ενέργειας
+- Ενδείξεις κατάστασης LED
+- Απλή καλωδίωση με απευθείας συνδέσεις κουμπιών στα PIN του ESP32
+
+### Απαιτήσεις Υλικού
+- Αναπτυξιακή πλακέτα ESP32
+- Κουμπιά πίεσης ή μικροδιακόπτες
+- Αντιστάσεις 10k ohm (προαιρετικά, καθώς χρησιμοποιούνται οι εσωτερικές αντιστάσεις pull-up)
+- LED για ένδειξη κατάστασης (προαιρετικά)
+- Πηγή τροφοδοσίας (USB ή μπαταρία)
+
+### Εγκατάσταση
+1. Κλωνοποιήστε αυτό το αποθετήριο ή κατεβάστε τον πηγαίο κώδικα
+2. Εγκαταστήστε τις απαιτούμενες βιβλιοθήκες στο Arduino IDE σας:
+   - ESP32 BLE Arduino από τον Neil Kolban
+   - AsyncTCP από τον Hristo Gochkov
+   - ESPAsyncWebServer από τον Hristo Gochkov
+   - ArduinoJson από τον Benoit Blanchon
+3. Συνδέστε τα κουμπιά σας στον ESP32 σύμφωνα με τη διαμόρφωσή σας
+4. Ανεβάστε τον κώδικα στον ESP32 σας
+5. Ανεβάστε τα αρχεία διαδικτυακής διεπαφής στο SPIFFS χρησιμοποιώντας το εργαλείο "ESP32 Sketch Data Upload"
+
+### Χρήση της Διαδικτυακής Διεπαφής
+1. Ενεργοποιήστε τη διαδικτυακή διεπαφή πατώντας το κουμπί BOOT στον ESP32 σας
+2. Συνδεθείτε στο δίκτυο WiFi "ESP32-BLE-Gamepad" με κωδικό πρόσβασης "esp32gamepad"
+3. Ανοίξτε ένα πρόγραμμα περιήγησης ιστού και μεταβείτε στο `http://192.168.4.1`
+4. Συνδεθείτε με τα προεπιλεγμένα διαπιστευτήρια (όνομα χρήστη: `admin`, κωδικός πρόσβασης: `admin`)
+5. Διαμορφώστε το χειριστήριό σας μέσω της διαισθητικής διαδικτυακής διεπαφής:
+   - Γενικές Ρυθμίσεις: Αλλάξτε το όνομα της συσκευής, τον κατασκευαστή, το επίπεδο μπαταρίας και το χρονικό όριο αναστολής
+   - Κουμπιά: Προσθέστε, επεξεργαστείτε ή αφαιρέστε διαμορφώσεις κουμπιών
+   - Διαπιστευτήρια: Αλλάξτε το όνομα χρήστη και τον κωδικό πρόσβασης
+
+### Διαχείριση Ενέργειας
+Το χειριστήριο εισέρχεται σε λειτουργία αναστολής μετά από μια διαμορφώσιμη περίοδο αδράνειας για εξοικονόμηση ενέργειας. Πατήστε οποιοδήποτε διαμορφωμένο κουμπί για να το αφυπνίσετε. Το LED υποδεικνύει την τρέχουσα κατάσταση:
+- Σταθερά ΑΝΑΜΜΕΝΟ: Συνδεδεμένο μέσω BLE
+- ΣΒΗΣΤΟ: Μη συνδεδεμένο
+- Αναβοσβήνει: Ενεργή διαδικτυακή διεπαφή
+
+### Αντιμετώπιση Προβλημάτων
+- Αν τα κουμπιά δεν αποκρίνονται, ελέγξτε την καλωδίωσή σας και τις διαμορφώσεις PIN
+- Αν το χειριστήριο δεν συνδέεται, βεβαιωθείτε ότι το Bluetooth είναι ενεργοποιημένο στη συσκευή υποδοχής σας
+- Αν η διαδικτυακή διεπαφή δεν είναι προσβάσιμη, δοκιμάστε να επαναφέρετε τον ESP32 και ελέγξτε τη σύνδεση WiFi σας
+
+### Άδεια Χρήσης
+Αυτό το έργο κυκλοφορεί υπό την Άδεια MIT.
